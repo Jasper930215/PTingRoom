@@ -1,0 +1,93 @@
+*, html, body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre,
+	form, fieldset, input, textarea, p, blockquote, table, tbody, tr,
+	caption, th, td, tfoot, img {
+	margin: 0;
+	padding: 0;
+}
+
+ul, ol, dl, li, dd, dt, p, form, div {
+	list-style: none;
+}
+
+a {
+	cursor: pointer;
+}
+
+.main
+{
+	position: relative;
+    padding-left: 260px;
+}
+
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+	width: 100%;
+	table-layout: fixed;
+}
+
+.community_index{
+	font-size: 30px;
+    margin: 0 0 15px 0;
+}
+
+.community_layout {
+	float: none;
+	margin: 0 auto;
+}
+
+caption {
+	display: none !important;
+}
+
+thead th,thead td {
+	text-align: center;
+	padding-top: 8px;
+	padding-bottom: 7px;
+	background: #f6f6f6;
+	border-top: 1px solid #d6d6d6;
+	border-right: 1px solid #d6d6d6;
+	font-size: 15px;
+	font-weight: bold;
+	color: #444;
+}
+
+.detail_right{
+	text-align: center;
+	padding-top: 8px;
+	padding-bottom: 7px;
+	background: #f6f6f6;
+	border-top: 1px solid #d6d6d6;
+	border-right: none !important;
+	font-size: 15px;
+	font-weight: bold;
+	color: #444;
+}
+
+.detail_left{
+	text-align: left;
+	padding-left: 10px;
+}
+
+tbody td {
+	background: #fff;
+	padding: 20px 20px 20px 20px;
+	border-top: 1px solid #d6d6d6;
+	color: #888;
+	text-align: left;
+}
+
+.table_control {
+	display: inline-block;
+	width: 100%;
+	margin-top: 10px;
+	text-align: right;
+	clear: both;
+	height: 43px;
+}
+
+.table_control>div>a {
+	background: #fff;
+	float: right;
+	margin-left: 7px;
+}

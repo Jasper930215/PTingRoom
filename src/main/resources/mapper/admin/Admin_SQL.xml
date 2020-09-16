@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="admin">
+	<select id="selectMemberInfo" parameterType="HashMap" resultType="HashMap">
+		<!-- 로그인 - 사용자 정보 조회 -->
+		<![CDATA[
+		SELECT
+		ADM_ID,
+		ADM_PW
+		FROM
+		ADMIN
+		WHERE ADM_ID = #{ADM_ID} AND ADM_PW = #{ADM_PW}	
+		]]>
+	</select>
+	
+	<update id="updatePW" parameterType="hashmap"> 
+	<![CDATA[ 
+		UPDATE ADMIN
+		SET 
+		ADM_PW = #{ADM_PW2} 
+		WHERE ADM_ID = #{ADM_ID} AND ADM_PW = #{ADM_PW}
+	]]> 
+	</update>
+	
+	<select id="selectPdList" parameterType="hashmap" resultType="hashmap">
+		SELECT 	
+		D.RNUM,
+		D.PD_NAME, 
+		D.PD_PRICE,
+		D.PD_BODY
+		FROM
+      	(
+      	SELECT
+      	ROWNUM AS RNUM,
+      	C.PD_NAME, 
+		C.PD_PRICE,
+		C.PD_BODY
+      	FROM
+      	(
+      	SELECT
+      	PD_NAME, 
+		PD_PRICE,
+		PD_BODY
+		FROM
+		PRODUCT
+		<choose>
+			<when test="SEARCH_TYPE == 'NAME' ">
+				<if test="SEARCH_WORD != NULL and SEARCH_WORD !=''">
+				WHERE PD_NAME LIKE '%' || #{SEARCH_WORD} || '%'
+				</if>
+			</when>
+			<when test="SEARCH_TYPE == 'BODY' ">
+				<if test="SEARCH_WORD != NULL and SEARCH_WORD !=''">
+				WHERE PD_BODY LIKE '%' || #{SEARCH_WORD} || '%'
+				</if>
+			</when>
+		</choose>
+		ORDER BY PD_NAME ASC
+		) C
+      	WHERE ROWNUM <![CDATA[<=]]> #{END}
+      	) D
+      	WHERE D.RNUM <![CDATA[>=]]> #{START}
+	</select>
+	
+	<select id="pdListGetCount" parameterType="HashMap" resultType="int">
+		SELECT
+		COUNT(*)
+		FROM
+		PRODUCT
+		<choose>
+			<when test="SEARCH_TYPE == 'NAME' ">
+				<if test="SEARCH_WORD != NULL and SEARCH_WORD !=''">
+				WHERE PD_NAME LIKE '%' || #{SEARCH_WORD} || '%'
+				</if>
+			</when>
+			<when test="SEARCH_TYPE == 'BODY' ">
+				<if test="SEARCH_WORD != NULL and SEARCH_WORD !=''">
+				WHERE PD_BODY LIKE '%' || #{SEARCH_WORD} || '%'
+				</if>
+			</when>
+		</choose>
+	</select>
+	
+	<insert id="insertPd" parameterType="hashmap">
+	<![CDATA[
+		INSERT INTO PRODUCT
+		(
+			PD_NAME, 
+			PD_PRICE,
+			PD_BODY
+		)
+		VALUES
+		(
+			#{PD_NAME}, 
+			#{PD_PRICE},
+			#{PD_BODY}
+		)
+	]]>
+	</insert>
+	
+	<select id="selectPdDetail" parameterType="hashmap" resultType="hashmap">
+	<![CDATA[
+		SELECT
+		PD_NAME,
+		PD_PRICE,
+		PD_BODY
+		FROM
+		PRODUCT
+		WHERE PD_NAME = #{PD_NAME}
+	]]>
+	</select>
+	
+	<update id="updatePd" parameterType="hashmap"> 
+	<![CDATA[ 
+		UPDATE PRODUCT
+		SET 
+		PD_PRICE = #{PD_PRICE}, 
+		PD_BODY = #{PD_BODY}
+		WHERE PD_NAME = #{PD_NAME} 
+	]]> 
+	</update>
+	
+	<delete id = "deletePd" parameterType="hashmap">
+	<![CDATA[
+ 		DELETE FROM PRODUCT
+ 		WHERE PD_NAME = #{PD_NAME}
+	]]>
+	</delete>
+</mapper>

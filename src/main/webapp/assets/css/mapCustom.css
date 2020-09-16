@@ -1,0 +1,289 @@
+#mapArea {
+	position: absolute;
+	width: 100%;
+	height: 1200px;
+}
+
+#mapArea>div {
+	text-align: center;
+}
+
+li {
+	list-style: none;
+}
+
+.main-content {
+	padding: 0 !important;
+	width: 100%;
+	left: 80px;
+}
+
+.cstlay {
+	background: #0000ff;
+	color: #fff;
+}
+
+.main-navbar {
+	position: absolute;
+	width: 72px;
+	top: 0px;
+	bottom: 0px;
+	left: 0px !important;
+	background: rgb(0, 0, 0, 0.8);
+	z-index: 5001;
+	border-bottom: 1px solid #fff;
+}
+
+.map-leftbar {
+	z-index: 9999 !important;
+	padding-top: 0px !important;
+	left: 72px !important;
+}
+
+.sub-navbar {
+	background: rgb(0, 0, 0, 0.8);
+	z-index: 5002;
+}
+
+.main-brand {
+	background: border-box !important;
+	z-index: 5001;
+	margin: 0 !important;
+	padding-top: 10px !important;
+	font-size: 22px;
+	float: right;
+	padding-right: 5%;
+}
+
+#wrapper .sidebar {
+	-webkit-transition: all 0.3s ease-in-out;
+	-moz-transition: all 0.3s ease-in-out;
+	-ms-transition: all 0.3s ease-in-out;
+	-o-transition: all 0.3s ease-in-out;
+	transition: all 0.3s ease-in-out;
+	width: 300px;
+	height: 100%;
+	float: left;
+	background-color: #fff;
+	position: fixed;
+	left: 0;
+}
+
+#wrapper #sidebar-nav, #wrapper .main {
+	padding-top: 0px !important;
+	overflow: hidden;
+}
+
+.sidebar .nav>li {
+	color: #000;
+	position: relative;
+	padding: 10px 30px 5px;
+	border-top: 1px solid #eee;
+}
+
+.sidebar .nav>li>a:focus, .sidebar .nav>li>a.active {
+	background-color: #EFF7FF;
+	border-left-color: #00AAFF;
+}
+
+.sidebar .nav>li:hover {
+	background: #EFF7FF;
+}
+
+.sidebar .nav>li>div>a {
+	font-size: 15px;
+	padding: 10px 0px;
+	color: #c323df;
+	display: block;
+}
+
+.sidebar .nav>li>a:hover {
+	color: #c323df;
+	text-decoration: underline;
+}
+
+.List_ADDR1 {
+	overflow: hidden;
+	font-size: 13px;
+	line-height: 18px;
+	color: #222;
+}
+
+.List_ADDR2 {
+	overflow: hidden;
+	font-size: 13px;
+	line-height: 18px;
+	color: #222;
+}
+
+.sidebar .nav span {
+	-webkit-transition: all 0.3s ease-in-out;
+	-moz-transition: all 0.3s ease-in-out;
+	-ms-transition: all 0.3s ease-in-out;
+	-o-transition: all 0.3s ease-in-out;
+	transition: all 0.3s ease-in-out;
+	position: relative;
+	display: inline-block;
+}
+
+.List_PHONE {
+	margin-right: 10px;
+	font-size: 14px;
+}
+
+.List_INFO {
+	font-size: 11px;
+	color: #800000;
+}
+
+.paginate_wrap {
+    position: relative;
+    z-index: 1;
+    padding: 20px 0 40px;
+    line-height: 18px;
+    text-align: center;
+    zoom: 1;
+}
+
+.mapPaging_curPage {
+	padding-right: 5px;
+	padding-left: 5px;
+	color: #000;
+	font-size: larger;
+}
+
+.paginate {
+    display: inline-block;
+    position: relative;
+    zoom: 1;
+}
+
+.paginate a {
+	padding: 0 5px 0;
+}
+
+.map_search {
+	background: #258fff;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 46px;
+    border-radius: 3px;
+    background-color: #fff;
+    -webkit-box-shadow: 0 2px 1px 0 rgba(0,0,0,.15);
+    -moz-box-shadow: 0 2px 1px 0 rgba(0,0,0,.15);
+    box-shadow: 0 2px 1px 0 rgba(0,0,0,.15);
+}
+
+.map_search_input {
+    float: left;
+    width: 80%;
+    height: 35px;
+    border: 0 none;
+    font-weight: bold;
+    font-size: 16px;
+    line-height: 19px;
+    outline: 0;
+    padding: 12px 12px 0px;
+}
+
+.map_search_btn {
+    width: 10%;
+    height: 36px;
+    margin: 5px 0;
+    border: 1px solid #258FFF;
+    line-height: 0;
+    cursor: pointer;
+    background: #fff;
+}
+
+input::placeholder {
+  color: #258FFF;
+}
+
+#mapArea div>a {
+}
+
+.List_li {
+	display: inline-block;
+	line-height: 25px;
+}
+
+.List_div {
+	top: 15px;
+	float: right;
+	position: relative;
+}
+
+.List_IMAGE {
+	width: 50px;
+	height: 50px;
+	background-size: cover !important;
+	background-repeat: no-repeat !important;
+	border: 1px solid deepskyblue;
+}
+
+.info_wrap {
+	border: none;
+}
+
+.info_content {
+	border: none;
+	
+}
+
+.info_name {
+	width: 100%;
+	display: inline-block;
+	background: #000;
+	color: #fff !important;
+}
+
+.info_address {
+	display: inline-block;
+}
+
+.left_icon {
+	color: #fff;
+	width: 72px;
+	height: 72px;
+	display: inline-block;
+    overflow: hidden;
+    text-align: center;
+}
+
+.left_icon>span {
+	display: block;
+	font-size: 15px;
+}
+
+.left_home {
+}
+
+.left_login {
+}
+
+.left_join {
+}
+
+.left_logout {
+}
+
+.left_mypage {
+}
+
+.left_coupon {
+}
+
+.left_map {
+}
+
+.left_community {
+}
+
+.left_payment {
+}
+
+.left_cs {
+}

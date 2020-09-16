@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="adminMember">
+	
+	<select id="selectMemInfo" parameterType="hashmap" resultType="hashmap">
+		SELECT MB_CODE, MB_ID, MB_NAME, MB_PHONE, PD_NAME, MB_GENDER, MB_AGE, MB_BUY, MB_STATUS, MB_LEVEL, MB_INITIAL, MB_LOWEST, MB_TARGET, MB_CH, MB_HEIGHT
+		FROM MEMBER
+		WHERE MB_CODE = #{MB_CODE}
+	</select>
+	<select id="selectMemList" parameterType="hashmap" resultType="hashmap">
+		SELECT MB_CODE, MB_ID, MB_NAME, MB_PHONE, PD_NAME, MB_BYE FROM MEMBER WHERE MB_BYE = 'N'
+		<choose>
+			<when test="SEARCH_TYPE == 'Name' ">
+				<if test="SEARCH_WORD != NULL and SEARCH_WORD !=''">
+				AND MB_NAME LIKE '%' || #{SEARCH_WORD} || '%'
+				</if>
+			</when>
+			<when test="SEARCH_TYPE == 'ID' ">
+				<if test="SEARCH_WORD != NULL and SEARCH_WORD !=''">
+				AND MB_ID LIKE '%' || #{SEARCH_WORD} || '%'
+				</if>
+			</when>
+			<when test="SEARCH_TYPE == 'Phone' ">
+				<if test="SEARCH_WORD != NULL and SEARCH_WORD !=''">
+				AND MB_PHONE LIKE '%' || #{SEARCH_WORD} || '%'
+				</if>
+			</when>
+		</choose>
+	</select>
+	<select id="selectWithdrawList" parameterType="hashmap" resultType="hashmap">
+		SELECT MB_CODE, MB_ID, MB_NAME, MB_PHONE, PD_NAME, MB_BYE FROM MEMBER WHERE MB_BYE = 'Y'
+		<choose>
+			<when test="SEARCH_TYPE == 'Name' ">
+				<if test="SEARCH_WORD != NULL and SEARCH_WORD !=''">
+				AND MB_NAME LIKE '%' || #{SEARCH_WORD} || '%'
+				</if>
+			</when>
+			<when test="SEARCH_TYPE == 'ID' ">
+				<if test="SEARCH_WORD != NULL and SEARCH_WORD !=''">
+				AND MB_ID LIKE '%' || #{SEARCH_WORD} || '%'
+				</if>
+			</when>
+			<when test="SEARCH_TYPE == 'Phone' ">
+				<if test="SEARCH_WORD != NULL and SEARCH_WORD !=''">
+				AND MB_PHONE LIKE '%' || #{SEARCH_WORD} || '%'
+				</if>
+			</when>
+		</choose>
+	</select>
+	<select id="getMemCnt" parameterType="hashmap" resultType="string">
+		SELECT COUNT(MB_CODE) AS RESULT FROM MEMBER WHERE MB_BYE = 'N'
+		<choose>
+			<when test="SEARCH_TYPE == 'Name' ">
+				<if test="SEARCH_WORD != NULL and SEARCH_WORD !=''">
+				AND MB_NAME LIKE '%' || #{SEARCH_WORD} || '%'
+				</if>
+			</when>
+			<when test="SEARCH_TYPE == 'ID' ">
+				<if test="SEARCH_WORD != NULL and SEARCH_WORD !=''">
+				AND MB_ID LIKE '%' || #{SEARCH_WORD} || '%'
+				</if>
+			</when>
+			<when test="SEARCH_TYPE == 'Phone' ">
+				<if test="SEARCH_WORD != NULL and SEARCH_WORD !=''">
+				AND MB_PHONE LIKE '%' || #{SEARCH_WORD} || '%'
+				</if>
+			</when>
+		</choose>
+	</select>
+	<select id="getWithdrawCnt" parameterType="hashmap" resultType="string">
+		SELECT COUNT(MB_CODE) AS RESULT FROM MEMBER WHERE MB_BYE = 'Y'
+		<choose>
+			<when test="SEARCH_TYPE == 'Name' ">
+				<if test="SEARCH_WORD != NULL and SEARCH_WORD !=''">
+				AND MB_NAME LIKE '%' || #{SEARCH_WORD} || '%'
+				</if>
+			</when>
+			<when test="SEARCH_TYPE == 'ID' ">
+				<if test="SEARCH_WORD != NULL and SEARCH_WORD !=''">
+				AND MB_ID LIKE '%' || #{SEARCH_WORD} || '%'
+				</if>
+			</when>
+			<when test="SEARCH_TYPE == 'Phone' ">
+				<if test="SEARCH_WORD != NULL and SEARCH_WORD !=''">
+				AND MB_PHONE LIKE '%' || #{SEARCH_WORD} || '%'
+				</if>
+			</when>
+		</choose>
+	</select>
+	<update id="updateMemStat" parameterType="hashmap">
+		<![CDATA[
+			UPDATE MEMBER SET MB_STATUS = #{status} WHERE MB_CODE = #{code}
+		]]>
+	</update>
+	<update id="updateLoWeight" parameterType="hashmap">
+		<![CDATA[
+			UPDATE MEMBER SET MB_LOWEST = #{loWei} WHERE MB_CODE = #{code}
+		]]>
+	</update>
+	
+</mapper>

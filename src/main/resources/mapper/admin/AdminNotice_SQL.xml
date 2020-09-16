@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="adminNotice">
+	<select id="selectBoardList" parameterType="hashmap" resultType="hashmap">
+		SELECT 	
+		D.RNUM,
+		D.NT_NUM,
+		D.NT_TITLE,
+		D.NT_DATE
+		FROM
+      	(
+      	SELECT
+      	ROWNUM AS RNUM,
+      	C.NT_NUM,
+		C.NT_TITLE,
+		C.NT_DATE
+      	FROM
+      	(
+      	SELECT
+      	NT_NUM, 
+		NT_TITLE,
+		TO_CHAR(NT_DATE,'YYYY.MM.DD') AS NT_DATE
+		FROM
+		NOTICE
+		<choose>
+			<when test="SEARCH_TYPE == 'TITLE' ">
+				<if test="SEARCH_WORD != NULL and SEARCH_WORD !=''">
+				WHERE NT_TITLE LIKE '%' || #{SEARCH_WORD} || '%'
+				</if>
+			</when>
+			<when test="SEARCH_TYPE == 'NUM' ">
+				<if test="SEARCH_WORD != NULL and SEARCH_WORD !=''">
+				WHERE NT_NUM = #{SEARCH_WORD}
+				</if>
+			</when>
+			<when test="SEARCH_TYPE == 'BODY' ">
+				<if test="SEARCH_WORD != NULL and SEARCH_WORD !=''">
+				WHERE NT_BODY LIKE '%' || #{SEARCH_WORD} || '%'
+				</if>
+			</when>
+		</choose>
+		ORDER BY NT_NUM DESC
+		) C
+      	WHERE ROWNUM <![CDATA[<=]]> #{END}
+      	) D
+      	WHERE D.RNUM <![CDATA[>=]]> #{START}
+	</select>
+	
+	<select id="boardListGetCount" parameterType="HashMap" resultType="int">
+		SELECT
+		COUNT(NT_NUM)
+		FROM
+		NOTICE
+		<choose>
+			<when test="SEARCH_TYPE == 'TITLE' ">
+				<if test="SEARCH_WORD != NULL and SEARCH_WORD !=''">
+				WHERE NT_TITLE LIKE '%' || #{SEARCH_WORD} || '%'
+				</if>
+			</when>
+			<when test="SEARCH_TYPE == 'NUM' ">
+				<if test="SEARCH_WORD != NULL and SEARCH_WORD !=''">
+				WHERE NT_NUM = #{SEARCH_WORD}
+				</if>
+			</when>
+			<when test="SEARCH_TYPE == 'BODY' ">
+				<if test="SEARCH_WORD != NULL and SEARCH_WORD !=''">
+				WHERE NT_BODY LIKE '%' || #{SEARCH_WORD} || '%'
+				</if>
+			</when>
+		</choose>
+	</select>
+
+	<select id="selectBoardDetail" parameterType="hashmap" resultType="hashmap">
+	<![CDATA[
+		SELECT
+		NT_NUM,
+		ADM_ID,
+		TO_CHAR(NT_DATE,'YYYY.MM.DD HH24:MM') AS NT_DATE,
+		NT_TITLE,
+		NT_BODY
+		FROM
+		NOTICE
+		WHERE NT_NUM = #{NT_NUM}
+	]]>
+	</select>
+	
+	<insert id="insertBoard" parameterType="hashmap">
+	<![CDATA[
+		INSERT INTO NOTICE
+		(
+			NT_NUM,
+		    NT_TITLE, 
+		   	NT_BODY,
+		   	NT_DATE,
+		   	ADM_ID
+		)
+		VALUES
+		(
+			SEQ_NOTICE.NEXTVAL, 
+		    #{NT_TITLE}, 
+		    #{NT_BODY},
+		    SYSDATE,
+		    #{ADM_ID} 
+		)
+	]]>
+	</insert>
+	
+	<update id="updateBoard" parameterType="hashmap"> 
+	<![CDATA[ 
+		UPDATE NOTICE
+		SET 
+		NT_TITLE = #{NT_TITLE}, 
+		NT_BODY = #{NT_BODY},
+		NT_DATE = SYSDATE
+		WHERE NT_NUM = #{NT_NUM} 
+	]]> 
+	</update>
+	
+	<delete id = "deleteBoard" parameterType="hashmap">
+	<![CDATA[
+ 		DELETE FROM NOTICE
+ 		WHERE NT_NUM = #{NT_NUM}
+	]]>
+	</delete>
+</mapper>
+

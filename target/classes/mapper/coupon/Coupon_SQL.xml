@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="coupon">
+	<select id="checkcp" parameterType="HashMap" resultType="HashMap">
+	<![CDATA[
+	SELECT
+	COUNT(*) AS RESULT
+	FROM
+	COUPON
+	WHERE
+	MB_CODE = #{MB_CODE} AND TRUNC((TO_DATE(#{CUR},'YYYY.MM.DD') - CPN_DDATE )) <= 30
+	]]>
+	</select>
+	
+	<insert id="cpget" parameterType="hashmap"> 
+	<![CDATA[ 
+	INSERT INTO COUPON 
+	(
+	CPN_CODE,
+	CPN_DDATE,
+	MB_CODE,
+	CPN_CHECK
+	)
+	VALUES
+	(
+	#{CPN_CODE},
+	SYSDATE,
+	#{MB_CODE},
+	'N'
+	)
+	]]> 
+	</insert>
+	
+	<select id="cplistMGetCount" parameterType="HashMap" resultType="int">
+	<![CDATA[
+	SELECT
+	COUNT(*)
+	FROM COUPON
+	WHERE MB_CODE = #{MB_CODE}
+	]]> 
+	</select>
+	
+	<select id="selectCpm" parameterType="hashmap" resultType="hashmap"> 
+	SELECT 
+	B.RNUM,
+	B.CPN_CODE, 
+	TO_CHAR(B.CPN_SDATE,'YYYY.MM.DD') AS CPN_SDATE, 
+	B.CPN_CHECK, 
+	TO_CHAR(B.CPN_DDATE,'YYYY.MM.DD') AS CPN_DDATE,
+	B.ADM_ID
+	FROM 
+	(
+	SELECT 
+	ROWNUM AS RNUM, 
+	A.CPN_CODE, 
+	A.CPN_DDATE,
+	A.CPN_SDATE, 
+	A.CPN_CHECK, 
+	A.ADM_ID
+	FROM
+	(
+	SELECT 
+	CPN_CODE, 
+	CPN_DDATE,
+	CPN_SDATE, 
+	CPN_CHECK, 
+	ADM_ID
+	FROM COUPON
+	WHERE MB_CODE = #{MB_CODE}
+	ORDER BY CASE CPN_CHECK WHEN 'N' THEN '1' WHEN 'W' THEN '2' WHEN 'Y' THEN '3' WHEN 'R' THEN '4' ELSE '5' END, CPN_DDATE DESC 
+	)A
+	WHERE ROWNUM <![CDATA[<=]]> #{END}
+	)B
+	WHERE B.RNUM <![CDATA[>=]]> #{START}
+	</select>
+	
+	<update id="request" parameterType="hashmap"> 
+	<![CDATA[ 
+	UPDATE COUPON 
+	SET 
+	CPN_SDATE = SYSDATE,
+	CPN_CHECK = 'W',
+	ADM_ID= 'admin'
+	WHERE CPN_CODE = #{CPN_CODE}
+	]]> 
+	</update>
+
+	<select id="cplistAGetCount" parameterType="HashMap" resultType="int">
+	SELECT
+	COUNT(*)
+	FROM 
+	COUPON A, MEMBER B
+	WHERE A.MB_CODE = B.MB_CODE AND A.ADM_ID = 'admin'
+	<choose>
+		<when test="SEARCH_TYPE == 'NAME' ">
+			<if test="SEARCH_WORD != NULL and SEARCH_WORD !=''">
+			AND B.MB_NAME = #{SEARCH_WORD}
+			</if>
+		</when>
+		<when test="SEARCH_TYPE == 'PHONE' ">
+			<if test="SEARCH_WORD != NULL and SEARCH_WORD !=''">
+			AND B.MB_PHONE LIKE '%' || #{SEARCH_WORD} || '%'
+			</if>
+		</when>
+		
+		<when test="SEARCH_TYPE == 'ID' ">
+			<if test="SEARCH_WORD != NULL and SEARCH_WORD !=''">
+			AND B.MB_ID LIKE '%' || #{SEARCH_WORD} || '%'
+			</if>
+		</when>
+	</choose>
+	</select>
+	
+	<select id="selectCpa" parameterType="hashmap" resultType="hashmap"> 
+	SELECT 	
+	D.RNUM,
+    D.CPN_CODE,
+	D.MB_ID,
+	D.MB_NAME,
+	D.MB_PHONE,
+	D.CPN_SDATE,
+	D.CPN_DDATE,
+	D.CPN_CHECK
+	FROM
+    (
+    SELECT
+    ROWNUM AS RNUM,
+    C.CPN_CODE,
+	C.MB_ID,
+	C.MB_NAME,
+	C.MB_PHONE,
+	C.CPN_SDATE,
+	C.CPN_DDATE,
+	C.CPN_CHECK
+    FROM
+    (
+    SELECT
+    A.CPN_CODE AS CPN_CODE,
+	B.MB_ID AS MB_ID,
+	B.MB_NAME AS MB_NAME,
+	B.MB_PHONE AS MB_PHONE,
+	TO_CHAR(A.CPN_SDATE,'YYYY.MM.DD') AS CPN_SDATE,
+	TO_CHAR(A.CPN_DDATE,'YYYY.MM.DD') AS CPN_DDATE,
+	A.CPN_CHECK AS CPN_CHECK
+	FROM
+	COUPON A, MEMBER B
+	WHERE A.MB_CODE = B.MB_CODE AND A.ADM_ID = 'admin'
+	<choose>
+		<when test="SEARCH_TYPE == 'NAME' ">
+			<if test="SEARCH_WORD != NULL and SEARCH_WORD !=''">
+			AND B.MB_NAME = #{SEARCH_WORD}
+			</if>
+		</when>
+		<when test="SEARCH_TYPE == 'PHONE' ">
+			<if test="SEARCH_WORD != NULL and SEARCH_WORD !=''">
+			AND B.MB_PHONE LIKE '%' || #{SEARCH_WORD} || '%'
+			</if>
+		</when>
+		
+		<when test="SEARCH_TYPE == 'ID' ">
+			<if test="SEARCH_WORD != NULL and SEARCH_WORD !=''">
+			AND B.MB_ID LIKE '%' || #{SEARCH_WORD} || '%'
+			</if>
+		</when>
+	</choose>
+	ORDER BY CASE CPN_CHECK WHEN 'W' THEN '1' WHEN 'Y' THEN '2' WHEN 'R' THEN '3' ELSE '4' END, CPN_SDATE DESC
+	) C
+    WHERE ROWNUM <![CDATA[<=]]> #{END}
+    ) D
+    WHERE D.RNUM <![CDATA[>=]]> #{START}
+	</select>
+
+	<update id="expire" parameterType="hashmap"> 
+	<![CDATA[ 
+	UPDATE COUPON 
+	SET CPN_CHECK = 'E'	
+	WHERE CPN_CHECK='N' AND TRUNC(SYSDATE - CPN_DDATE ) > 30
+	]]> 
+	</update>
+	
+	<update id="permit" parameterType="hashmap"> 
+	<![CDATA[ 
+	UPDATE COUPON 
+	SET CPN_CHECK = 'Y'	
+	WHERE CPN_CODE = #{CPN_CODE}
+	]]> 
+	</update>
+	
+	<update id="reject" parameterType="hashmap"> 
+	<![CDATA[ 
+	UPDATE COUPON 
+	SET CPN_CHECK = 'R'	
+	WHERE CPN_CODE = #{CPN_CODE}
+	]]> 
+</update>
+</mapper>

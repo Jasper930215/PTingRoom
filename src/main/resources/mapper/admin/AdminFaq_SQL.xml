@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="adminFaq">
+	<select id="selectBoardList" parameterType="hashmap" resultType="hashmap">
+		SELECT 	
+		D.RNUM,
+      	D.FAQ_NUM,
+		D.FAQ_TITLE,
+		D.FAQ_BODY,
+		D.ADM_ID
+		FROM
+      	(
+      	SELECT
+      	ROWNUM AS RNUM,
+      	C.FAQ_NUM,
+		C.FAQ_TITLE,
+		C.FAQ_BODY,
+		C.ADM_ID
+      	FROM
+      	(
+      	SELECT
+      	FAQ_NUM, 
+		FAQ_TITLE,
+		FAQ_BODY,
+		ADM_ID
+		FROM
+		FAQ
+		<choose>
+			<when test="SEARCH_TYPE == 'TITLE' ">
+				<if test="SEARCH_WORD != NULL and SEARCH_WORD !=''">
+				WHERE FAQ_TITLE LIKE '%' || #{SEARCH_WORD} || '%'
+				</if>
+			</when>
+			<when test="SEARCH_TYPE == 'NUM' ">
+				<if test="SEARCH_WORD != NULL and SEARCH_WORD !=''">
+				WHERE FAQ_NUM = #{SEARCH_WORD}
+				</if>
+			</when>
+			<when test="SEARCH_TYPE == 'BODY' ">
+				<if test="SEARCH_WORD != NULL and SEARCH_WORD !=''">
+				WHERE FAQ_BODY LIKE '%' || #{SEARCH_WORD} || '%'
+				</if>
+			</when>
+		</choose>
+		ORDER BY FAQ_NUM DESC
+		) C
+      	WHERE ROWNUM <![CDATA[<=]]> #{END}
+      	) D
+      	WHERE D.RNUM <![CDATA[>=]]> #{START}
+	</select>
+	
+	<select id="boardListGetCount" parameterType="HashMap" resultType="int">
+		SELECT
+		COUNT(FAQ_NUM)
+		FROM
+		FAQ
+		<choose>
+			<when test="SEARCH_TYPE == 'TITLE' ">
+				<if test="SEARCH_WORD != NULL and SEARCH_WORD !=''">
+				WHERE FAQ_TITLE LIKE '%' || #{SEARCH_WORD} || '%'
+				</if>
+			</when>
+			<when test="SEARCH_TYPE == 'NUM' ">
+				<if test="SEARCH_WORD != NULL and SEARCH_WORD !=''">
+				WHERE FAQ_NUM = #{SEARCH_WORD}
+				</if>
+			</when>
+			<when test="SEARCH_TYPE == 'BODY' ">
+				<if test="SEARCH_WORD != NULL and SEARCH_WORD !=''">
+				WHERE FAQ_BODY LIKE '%' || #{SEARCH_WORD} || '%'
+				</if>
+			</when>
+		</choose>
+	</select>
+	
+	<insert id="insertBoard" parameterType="hashmap">
+	<![CDATA[
+		INSERT INTO FAQ
+		(
+			FAQ_NUM,
+		    FAQ_TITLE, 
+		   	FAQ_BODY,
+		   	ADM_ID
+		)
+		VALUES
+		(
+			SEQ_FAQ.NEXTVAL, 
+		    #{FAQ_TITLE}, 
+		    #{FAQ_BODY},
+		    #{ADM_ID} 
+		)
+	]]>
+	</insert>
+	
+	<update id="updateBoard" parameterType="hashmap"> 
+	<![CDATA[ 
+		UPDATE FAQ
+		SET 
+		FAQ_TITLE = #{FAQ_TITLE}, 
+		FAQ_BODY = #{FAQ_BODY}
+		WHERE FAQ_NUM = #{FAQ_NUM} 
+	]]> 
+	</update>
+	
+	<delete id = "deleteBoard" parameterType="hashmap">
+	<![CDATA[
+ 		DELETE FROM FAQ
+ 		WHERE FAQ_NUM = #{FAQ_NUM}
+	]]>
+	</delete>
+	
+	<select id="selectBoardDetail" parameterType="hashmap" resultType="hashmap">
+	<![CDATA[
+		SELECT
+		FAQ_NUM,
+		ADM_ID,
+		FAQ_TITLE,
+		FAQ_BODY
+		FROM
+		FAQ
+		WHERE FAQ_NUM = #{FAQ_NUM}
+	]]>
+	</select>
+</mapper>

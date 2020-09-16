@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="view">
+
+<select id="selectGymList" parameterType="hashmap" resultType="hashmap">
+		SELECT 	
+			D.RNUM,
+			D.GY_NUM,
+      		D.GY_NAME,
+      		D.GY_ADDR1,
+      		D.GY_ADDR2,
+      		D.GY_PHONE
+		FROM
+      	(
+      		SELECT
+      			ROWNUM AS RNUM,
+      			C.GY_NUM,
+      			C.GY_NAME,
+      			C.GY_ADDR1,
+      			C.GY_ADDR2,
+      			C.GY_PHONE
+      		FROM
+      		(
+      			SELECT
+      				GY_NUM,
+      				GY_NAME,
+      				GY_ADDR1,
+      				GY_ADDR2,
+      				GY_PHONE
+				FROM
+					GYM
+		<if test="SEARCH_WORD != NULL and SEARCH_WORD !=''">
+			WHERE
+				GY_NAME LIKE '%' || #{SEARCH_WORD} || '%' OR GY_ADDR1 LIKE '%' || #{SEARCH_WORD} || '%'
+		</if>
+			ORDER BY
+				GY_NAME ASC
+			) C
+      		WHERE
+      			ROWNUM <![CDATA[<=]]> #{END}
+      		) D
+      		WHERE
+      			D.RNUM <![CDATA[>=]]> #{START}
+	</select>
+	
+	<select id="selectGymDetail" parameterType="hashmap" resultType="hashmap">
+	<![CDATA[
+		SELECT
+			GY_NUM,
+			GY_NAME,
+			GY_POST,
+			GY_ADDR1,
+      		GY_ADDR2,
+			GY_PHONE,
+			GY_CNAME,
+			GY_CINTRO,
+			ADM_ID
+		FROM
+			GYM 
+		WHERE
+			GY_NUM = #{GY_NUM}
+	]]>
+	</select>
+	
+	<select id="selectFileList" parameterType="hashmap" resultType="hashmap"> 
+	<![CDATA[ 
+		SELECT 
+			FILE_NUM, 
+			FILE_NAME 
+		FROM 
+			GYM_FILE 
+		WHERE
+			GYM_NUM = #{GY_NUM} AND FILE_DEL = 'N' 
+	]]> 
+	</select>
+	
+	<select id="gymListGetCount" parameterType="HashMap" resultType="int">
+		SELECT
+			COUNT(GY_NUM)
+		FROM
+			GYM
+		<if test="SEARCH_WORD != NULL and SEARCH_WORD !=''">
+			WHERE
+				GY_ADDR1 LIKE '%' || #{SEARCH_WORD} || '%' OR GY_NAME LIKE '%' || #{SEARCH_WORD} || '%'
+		</if>
+	</select>
+
+</mapper>

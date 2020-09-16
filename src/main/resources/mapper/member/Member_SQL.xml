@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="member">
+	<select id="selectMemberID" parameterType="HashMap" resultType="HashMap">
+		<![CDATA[
+		SELECT
+		COUNT(MB_ID) AS RESULT
+		FROM
+		MEMBER
+		WHERE MB_ID = #{MB_ID}
+		]]>
+	</select>
+	
+	<insert id="insertMember" parameterType="HashMap">
+		<![CDATA[
+			INSERT INTO MEMBER
+			(
+			MB_CODE,
+			MB_ID,
+			MB_PW,
+			MB_PHONE,
+			MB_LEVEL
+			)
+			VALUES
+			(
+			#{MB_CODE},
+			#{MB_ID},
+			#{MB_PW},
+			#{MB_PHONE},
+			#{MB_LEVEL}
+			)
+			]]>
+	</insert>
+	
+	<insert id="insertMemberAdd" parameterType="HashMap">
+		<![CDATA[
+			INSERT INTO MEMBER
+			(
+			MB_CODE,
+			MB_ID,
+			MB_PW,
+			MB_LEVEL,
+			MB_NAME,
+			MB_INITIAL,
+			MB_TARGET,
+			PD_NAME,
+			MB_STATUS,
+			MB_BUY,
+			MB_WEEK,
+			MB_DAY,
+			MB_GENDER,
+			MB_AGE,
+			MB_CH,
+			MB_HEIGHT,
+			MB_PHONE
+			)
+			VALUES
+			(
+			#{MB_CODE},
+			#{MB_ID},
+			#{MB_PW},
+			#{MB_LEVEL},
+			#{MB_NAME},
+			#{MB_INITIAL},
+			#{MB_TARGET},
+			#{PD_NAME},
+			#{MB_STATUS},
+			SYSDATE,
+			TO_CHAR(SYSDATE, 'W'),
+			TO_CHAR(SYSDATE, 'day'),
+			#{MB_GENDER},
+			#{MB_AGE},
+			#{MB_CH},
+			#{MB_HEIGHT},
+			#{MB_PHONE}
+			)
+			]]>
+	</insert>
+	
+	<select id="selectMemberInfo" parameterType="HashMap" resultType="HashMap">
+		<!-- 로그인 - 사용자 정보 조회 -->
+		<![CDATA[
+		SELECT
+		MB_ID,
+		MB_LEVEL,
+		MB_CODE,
+		MB_PW,
+		MB_PHONE,
+		MB_NAME
+		FROM
+		MEMBER
+		WHERE MB_BYE = 'N' AND MB_ID = #{MB_ID} AND MB_PW = #{MB_PW} 
+		]]>
+	</select>
+	
+	<select id="selectProductList" parameterType="HashMap" resultType="HashMap">
+		<![CDATA[
+		SELECT
+		PD_NAME,
+		PD_PRICE,
+		PD_BODY
+		FROM
+		PRODUCT
+		]]>
+	</select>
+	
+	<select id="selectPrice" parameterType="HashMap" resultType="HashMap">
+		<![CDATA[
+		SELECT
+		
+		PD_PRICE
+		
+		FROM
+		PRODUCT
+		WHERE PD_NAME = #{PD_NAME}
+		]]>
+	</select>
+	
+	<update id="updateMemberAdd" parameterType="hashmap"> 
+	<![CDATA[ 
+		UPDATE MEMBER 
+		SET 
+		MB_LEVEL = #{MB_LEVEL},
+		MB_NAME = #{MB_NAME},
+		MB_INITIAL = #{MB_INITIAL},
+		MB_TARGET = #{MB_TARGET},
+		PD_NAME = #{PD_NAME},
+		MB_STATUS = #{MB_STATUS},
+		MB_BUY = SYSDATE,
+		MB_WEEK = TO_CHAR(SYSDATE, 'W'),
+		MB_DAY = TO_CHAR(SYSDATE, 'day'),
+		MB_GENDER = #{MB_GENDER},
+		MB_AGE = #{MB_AGE},
+		MB_CH = #{MB_CH},
+		MB_HEIGHT = #{MB_HEIGHT}
+		WHERE MB_CODE = #{MB_CODE} 
+	]]> 
+	</update>
+	
+	<update id="updateInfo" parameterType="hashmap"> 
+	<![CDATA[ 
+		UPDATE MEMBER 
+		SET 
+		MB_NAME = #{MB_NAME, jdbcType=VARCHAR},
+		MB_PHONE = #{MB_PHONE},
+		MB_PW = #{MB_PW}
+		WHERE MB_CODE = #{MB_CODE}
+	]]> 
+	</update>
+	
+	<update id="bye" parameterType="hashmap"> 
+	<![CDATA[ 
+		UPDATE MEMBER
+		SET 
+		MB_BYE = 'Y' 
+		WHERE MB_ID = #{MB_ID} AND MB_PW = #{MB_PW}
+	]]> 
+	</update>
+	
+	<select id="searchMember" parameterType="HashMap" resultType="HashMap">
+		<![CDATA[
+		SELECT
+		COUNT(MB_ID) AS RESULT
+		FROM
+		MEMBER
+		WHERE MB_BYE = 'N' AND MB_ID = #{MB_ID} 
+		]]>
+	</select>
+</mapper>

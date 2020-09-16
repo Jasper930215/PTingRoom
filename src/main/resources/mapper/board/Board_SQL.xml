@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="review">
+	<select id="selectBoardList" parameterType="hashmap" resultType="hashmap">
+		SELECT 	
+		D.RNUM,
+      	D.RV_NUM,
+		D.RV_TITLE,
+		D.RV_DATE,
+		D.RV_HIT,
+		D.MB_ID
+		FROM
+      	(
+      	SELECT
+      	ROWNUM AS RNUM,
+      	C.RV_NUM,
+		C.RV_TITLE,
+		C.RV_DATE,
+		C.RV_HIT,
+		C.MB_ID
+      	FROM
+      	(
+      	SELECT
+      	A.RV_NUM AS RV_NUM,
+		A.RV_TITLE AS RV_TITLE,
+		TO_CHAR(A.RV_DATE,'YYYY.MM.DD') AS RV_DATE,
+		A.RV_HIT AS RV_HIT,
+		B.MB_ID AS MB_ID
+		FROM
+		REVIEW A, MEMBER B
+		WHERE A.MB_CODE = B.MB_CODE
+		<choose>
+			<when test="SEARCH_TYPE == 'TITLE' ">
+				<if test="SEARCH_WORD != NULL and SEARCH_WORD !=''">
+				AND RV_TITLE LIKE '%' || #{SEARCH_WORD} || '%'
+				</if>
+			</when>
+			<when test="SEARCH_TYPE == 'NUM' ">
+				<if test="SEARCH_WORD != NULL and SEARCH_WORD !=''">
+				AND RV_NUM = #{SEARCH_WORD}
+				</if>
+			</when>
+			<when test="SEARCH_TYPE == 'BODY' ">
+				<if test="SEARCH_WORD != NULL and SEARCH_WORD !=''">
+				AND RV_BODY LIKE '%' || #{SEARCH_WORD} || '%'
+				</if>
+			</when>
+		</choose>
+		ORDER BY A.RV_NUM DESC
+		) C
+      	WHERE ROWNUM <![CDATA[<=]]> #{END}
+      	) D
+      	WHERE D.RNUM <![CDATA[>=]]> #{START}
+	</select>
+	<insert id="insertBoard" parameterType="hashmap">
+	<![CDATA[
+		INSERT INTO REVIEW
+		(
+			RV_NUM,
+		    RV_TITLE, 
+		    RV_BODY,
+		    RV_HIT,
+		    MB_CODE,
+		    RV_DATE
+		)
+		VALUES
+		(
+			SEQ_REVIEW_RV_NUM.NEXTVAL, 
+		    #{RV_TITLE}, 
+		    #{RV_BODY}, 
+		    0, 
+		    #{MB_CODE}, 
+		    SYSDATE
+		)
+	]]>
+	</insert>
+
+	<update id="updateHitCnt" parameterType="hashmap"> 
+	<![CDATA[ 
+	UPDATE REVIEW 
+	SET 
+	RV_HIT = NVL(RV_HIT, 0) + 1 
+	WHERE 
+	RV_NUM = #{RV_NUM} 
+	]]>
+	</update>
+	
+	<select id="selectBoardDetail" parameterType="hashmap" resultType="hashmap">
+	<![CDATA[
+		SELECT
+		A.RV_NUM,
+		A.RV_HIT,
+		B.MB_ID,
+		TO_CHAR(A.RV_DATE,'YYYY.MM.DD HH24:MM') AS RV_DATE,
+		A.RV_TITLE,
+		A.RV_BODY,
+		A.MB_CODE
+		FROM
+		REVIEW A, MEMBER B
+		WHERE A.MB_CODE = B.MB_CODE AND A.RV_NUM = #{RV_NUM}		
+	]]>
+	</select>
+
+	<select id="selectBoardDetailAdd" parameterType="hashmap" resultType="hashmap">
+	<![CDATA[
+		SELECT
+		MB_INITIAL,
+		MB_TARGET,
+		MB_LOWEST,
+		PD_NAME
+		FROM
+		MEMBER
+		WHERE MB_CODE = #{MB_CODE}
+	]]>
+	</select>
+
+	<update id="updateBoard" parameterType="hashmap"> 
+	<![CDATA[ 
+		UPDATE REVIEW 
+		SET 
+		RV_TITLE = #{RV_TITLE}, 
+		RV_BODY = #{RV_BODY},
+		RV_DATE = SYSDATE 
+		WHERE RV_NUM = #{RV_NUM} 
+	]]> 
+	</update>
+	
+	<delete id = "deleteBoard" parameterType="hashmap">
+	<![CDATA[
+ 		DELETE FROM REVIEW 
+ 		WHERE RV_NUM = #{RV_NUM}
+	]]>
+	</delete>
+	
+	<select id="boardListGetCount" parameterType="HashMap" resultType="int">
+		SELECT
+		COUNT(RV_NUM)
+		FROM
+		REVIEW
+		<choose>
+			<when test="SEARCH_TYPE == 'TITLE' ">
+				<if test="SEARCH_WORD != NULL and SEARCH_WORD !=''">
+				WHERE RV_TITLE LIKE '%' || #{SEARCH_WORD} || '%'
+				</if>
+			</when>
+			<when test="SEARCH_TYPE == 'NUM' ">
+				<if test="SEARCH_WORD != NULL and SEARCH_WORD !=''">
+				WHERE RV_NUM = #{SEARCH_WORD}
+				</if>
+			</when>
+			<when test="SEARCH_TYPE == 'BODY' ">
+				<if test="SEARCH_WORD != NULL and SEARCH_WORD !=''">
+				WHERE RV_BODY LIKE '%' || #{SEARCH_WORD} || '%'
+				</if>
+			</when>
+		</choose>
+	</select>
+</mapper>

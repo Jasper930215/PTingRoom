@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="adminGym">
+	<select id="selectBoardList" parameterType="hashmap" resultType="hashmap">
+		SELECT 	
+		D.RNUM,
+		D.GY_NUM,
+      	D.GY_NAME,
+      	D.GY_ADDR1,
+      	D.GY_ADDR2,
+      	D.GY_PHONE,
+      	D.GY_CNAME
+		FROM
+      	(
+      	SELECT
+      	ROWNUM AS RNUM,
+      	C.GY_NUM,
+      	C.GY_NAME,
+      	C.GY_ADDR1,
+      	C.GY_ADDR2,
+      	C.GY_PHONE,
+      	C.GY_CNAME 
+      	FROM
+      	(
+      	SELECT
+      	GY_NUM,
+      	GY_NAME,
+      	GY_ADDR1,
+      	GY_ADDR2,
+      	GY_PHONE,
+      	GY_CNAME 
+		FROM
+		GYM
+		<choose>
+			<when test="SEARCH_TYPE == 'NAME' ">
+				<if test="SEARCH_WORD != NULL and SEARCH_WORD !=''">
+				WHERE GY_NAME LIKE '%' || #{SEARCH_WORD} || '%'
+				</if>
+			</when>
+			<when test="SEARCH_TYPE == 'COACH' ">
+				<if test="SEARCH_WORD != NULL and SEARCH_WORD !=''">
+				WHERE GY_CNAME = #{SEARCH_WORD}
+				</if>
+			</when>
+			<when test="SEARCH_TYPE == 'ADDR' ">
+				<if test="SEARCH_WORD != NULL and SEARCH_WORD !=''">
+				WHERE GY_ADDR1 LIKE '%' || #{SEARCH_WORD} || '%'
+				</if>
+			</when>
+		</choose>
+		ORDER BY GY_NAME ASC
+		) C
+      	WHERE ROWNUM <![CDATA[<=]]> #{END}
+      	) D
+      	WHERE D.RNUM <![CDATA[>=]]> #{START}
+	</select>
+
+	<select id="boardListGetCount" parameterType="HashMap" resultType="int">
+		SELECT
+		COUNT(*)
+		FROM
+		GYM
+		<choose>
+			<when test="SEARCH_TYPE == 'NAME' ">
+				<if test="SEARCH_WORD != NULL and SEARCH_WORD !=''">
+				WHERE GY_NAME LIKE '%' || #{SEARCH_WORD} || '%'
+				</if>
+			</when>
+			<when test="SEARCH_TYPE == 'COACH' ">
+				<if test="SEARCH_WORD != NULL and SEARCH_WORD !=''">
+				WHERE GY_CNAME = #{SEARCH_WORD}
+				</if>
+			</when>
+			<when test="SEARCH_TYPE == 'ADDR' ">
+				<if test="SEARCH_WORD != NULL and SEARCH_WORD !=''">
+				WHERE GY_ADDR1 LIKE '%' || #{SEARCH_WORD} || '%'
+				</if>
+			</when>
+		</choose>
+	</select>
+	
+	<insert id="insertGym" parameterType="hashmap">
+	<![CDATA[
+		INSERT INTO GYM
+		(
+		GY_NAME, 
+		GY_PHONE, 
+		GY_NUM, 
+		GY_POST, 
+		GY_ADDR1,
+		GY_ADDR2, 
+		GY_CNAME, 
+		GY_CINTRO, 
+		ADM_ID
+		)
+		VALUES
+		(
+		#{GY_NAME}, 
+		#{GY_PHONE}, 
+		#{GY_NUM}, 
+		#{GY_POST}, 
+		#{GY_ADDR1},
+		#{GY_ADDR2},
+		#{GY_CNAME}, 
+		#{GY_CINTRO}, 
+		'admin'
+		)
+	]]>
+	</insert>
+	
+	<insert id="insertFile" parameterType="hashmap"> 
+	<![CDATA[ 
+		INSERT INTO GYM_FILE
+		(
+		FILE_NUM,
+		GYM_NUM,
+		FILE_NAME
+		)
+		VALUES
+		(
+		SEQ_GYM_FILE.NEXTVAL,
+		#{GY_NUM},
+		#{FILE_NAME}
+		)
+		
+	]]> 
+	</insert>
+	
+	<select id="selectBoardDetail" parameterType="hashmap" resultType="hashmap">
+	<![CDATA[
+		SELECT
+		GY_NUM,
+		GY_NAME,
+		GY_POST,
+		GY_ADDR1,
+      	GY_ADDR2,
+		GY_PHONE,
+		GY_CNAME,
+		GY_CINTRO,
+		ADM_ID
+		FROM
+		GYM 
+		WHERE GY_NUM = #{GY_NUM}
+	]]>
+	</select>
+	
+	<select id="selectFileList" parameterType="hashmap" resultType="hashmap"> 
+	<![CDATA[ 
+		SELECT 
+		FILE_NUM, 
+		FILE_NAME 
+		FROM 
+		GYM_FILE 
+		WHERE GYM_NUM = #{GY_NUM} AND FILE_DEL = 'N' 
+	]]> 
+	</select>
+
+	
+	<delete id = "deleteBoard" parameterType="hashmap">
+	<![CDATA[
+ 		DELETE FROM GYM
+ 		WHERE GY_NUM = #{GY_NUM}
+	]]>
+	</delete>
+	
+	<!-- <update id="updateBoard" parameterType="hashmap"> 
+	<![CDATA[ 
+		UPDATE GYM
+		SET 
+		GY_NAME = #{GY_NAME},
+		GY_POST = #{GY_POST},
+		GY_ADDR = CONCAT(#{GY_ADDR1},#{GY_ADDR2}),
+		GY_PHONE = #{GY_PHONE},
+		GY_CNAME = #{GY_CNAME},
+		GY_CINTRO = #{GY_CINTRO}
+		WHERE GY_NUM = #{GY_NUM} 
+	]]> 
+	</update>
+	
+	<update id="deleteFileList" parameterType="hashmap"> 
+	<![CDATA[ 
+		UPDATE GYM_FILE 
+		SET 
+		FILE_DEL = 'Y' 
+		WHERE GYM_NUM = #{GY_NUM} 
+	]]> 
+	</update> 
+	
+	<update id="updateFile" parameterType="hashmap"> 
+	<![CDATA[ 
+		UPDATE GYM_FILE 
+		SET 
+		FILE_DEL = 'N' 
+		WHERE FILE_NUM = #{FILE_IDX} 
+	]]> 
+	</update> -->
+
+</mapper>
